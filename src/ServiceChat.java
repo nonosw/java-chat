@@ -2,15 +2,16 @@ import java.util.*;
 import java.io.*;
 import java.net.*;
 
+
 public class ServiceChat extends Thread {
 
-    private static final int DEFAULT_TCP_PORT = 1234;
+    private static final int PORTTCP = 1234;
 
     public static final int NBUSERSMAX = 2;
     public static int nbUsers = 0;
     public static PrintStream[] outputs = new PrintStream[NBUSERSMAX];
 
-    private  Socket clientSocket;
+    private  final Socket clientSocket;
     private  Scanner clientScanner;
 
     public ServiceChat(Socket clientSocket) {
@@ -24,12 +25,12 @@ public class ServiceChat extends Thread {
         ServerSocket serverSocketMain;
 
         try {
-            serverSocketMain = new ServerSocket(DEFAULT_TCP_PORT);
-            System.out.println(String.format("ServiceChat ecoute sur le port %d", DEFAULT_TCP_PORT));
+            serverSocketMain = new ServerSocket(PORTTCP);
+            System.out.println("ServiceChat ecoute sur le port " + PORTTCP);
             while (true) {
                 if (nbUsers < NBUSERSMAX - 1) {
                     clientSocketMain = serverSocketMain.accept();
-                    System.out.println(String.format("Nouvelle connexion depuis %s  numero Client %d", clientSocketMain.getRemoteSocketAddress().toString(),nbUsers));
+                    System.out.println("Nouvelle connexion depuis " + clientSocketMain.getRemoteSocketAddress().toString()+ " | Numero Client" + nbUsers);
                     new ServiceChat(clientSocketMain);
                 } else {
                     serverSocketMain.close();
@@ -37,7 +38,7 @@ public class ServiceChat extends Thread {
             }
 
         } catch (IOException e) {
-            System.err.println(e);
+            e.printStackTrace();
         }
     }
 
