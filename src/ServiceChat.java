@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.HashMap;
+
 
 public class ServiceChat extends Thread {
 
@@ -14,9 +16,11 @@ public class ServiceChat extends Thread {
     //Pour pas se prendre la tête quand c'est pas le dernier utilisateur connecté qui se deconnecte
     //On synchronise dessus quand on ajoute, supprime ou lit la liste.
     private static final List<PrintStream> outputs = new ArrayList<>();
-
     // structure pour avoir un pseudo unique
     private static final Set<String> pseudos = new HashSet<>();
+
+    private static final HashMap<String, PrintStream> userStreams = new HashMap<>();
+
 
     private final Socket clientSocket;
     private Scanner clientScanner;
@@ -104,10 +108,13 @@ public class ServiceChat extends Thread {
 
                 synchronized (pseudos) {
                     if (pseudos.contains(choixPseudo)) {
-                        sendClient("[SERVER] Ce pseudo est déjà utilisé. Choisissez-en un autre :");
+                        sendClient("[SERVER] Ce pseudo est deja utilisé. Choisissez-en un autre :");
                     } else {
                         pseudos.add(choixPseudo);
                         this.pseudoDuClient = choixPseudo;
+                        synchronized (userStreams) {
+                            userStreams.put(choixPseudo, this.clientOutput);
+                        }
                         break;
                     }
                 }
@@ -118,11 +125,10 @@ public class ServiceChat extends Thread {
             }
 
             // Message de bienvenue côté console et côté client
-            System.out.println("Nouvel utilisateur : " + this.pseudoDuClient  + " | Utilisateurs connectes : " + outputs.size());
-            sendClient("[SERVER] Bienvenue " + this.pseudoDuClient + "!  Il y a Utilisateurs connectes : " + outputs.size());
+            System.out.println("Nouvel utilisateur : <" + this.pseudoDuClient  + "> | Utilisateurs connectes : " + outputs.size());
+            sendClient("[SERVER] Bienvenue <" + this.pseudoDuClient + ">! Utilisateurs connectes : " + outputs.size());
             sendClient(afficheListPseudo());
-            diffusionMessage("[SERVER] " + this.pseudoDuClient + " a rejoint le chat !");
-
+            diffusionMessage("[SERVER] <" + this.pseudoDuClient + "> a rejoint le chat !", this.clientOutput);
             return true;
         } catch (IOException e) {
             e.printStackTrace();
@@ -158,12 +164,16 @@ public class ServiceChat extends Thread {
                         sendClient(afficheListPseudo());
                         break;
 
-                    case "/msgAll":
-                        diffusionMessage("[" + this.pseudoDuClient + "] : " + arguments);
+                    case "/msgto":
+                        envoyerMessagePrive(arguments);
+                        break;
+
+                    case "/msgall":
+                        diffusionMessage("[" + this.pseudoDuClient + "] : " + arguments, clientOutput);
                         break;
 
                     default:
-                        diffusionMessage("[" + this.pseudoDuClient + "] : " + buffer);
+                        diffusionMessage("[" + this.pseudoDuClient + "] : " + buffer, clientOutput);
                         break;
                 }
             }
@@ -176,6 +186,9 @@ public class ServiceChat extends Thread {
 
     private void cleanup() {
         if (this.pseudoDuClient != null) {
+            synchronized (userStreams) {
+                userStreams.remove(this.pseudoDuClient);
+            }
             synchronized (pseudos) {
                 pseudos.remove(this.pseudoDuClient);
             }
@@ -198,26 +211,65 @@ public class ServiceChat extends Thread {
         if (this.pseudoDuClient != null) {
             System.out.println("Deconnexion utilisateur : " + this.pseudoDuClient
                     + " | Utilisateurs connectés : " + outputs.size());
-            diffusionMessage("[SERVER] " + this.pseudoDuClient + " a quitte le chat !");
+            diffusionMessage("[SERVER] " + this.pseudoDuClient + " a quitte le chat !", clientOutput);
         }
     }
 
-    public static void diffusionMessage(String message) {
+    public static void diffusionMessage(String message, PrintStream emeteur) {
         synchronized (outputs) {
             for (PrintStream ps : outputs) {
-                ps.println(message);
+                if ( ps != emeteur ){
+                    ps.println(message);
+                }
             }
             System.out.println(message);
         }
     }
 
+    private static String getPseudoByPrintStream(PrintStream ps) {
+        synchronized (userStreams) {
+            for (HashMap.Entry<String, PrintStream> entry : userStreams.entrySet()) {
+                if (entry.getValue().equals(ps)) {
+                    return entry.getKey(); // Retourne le pseudo associé au PrintStream
+                }
+            }
+        }
+        return null; // Retourne null si aucun pseudo trouvé
+    }
+
     private String afficheListPseudo() {
         String listepseudo;
-        listepseudo = "La liste des utilisateurs connectes : ";
+        listepseudo = "[SERVER] Utilisateurs connectes : ";
         for ( String parcourPseudo : pseudos ){
-            listepseudo += "[" + parcourPseudo + "] ";
+            listepseudo += "<" + parcourPseudo + "> ";
         }
         listepseudo += "!";
         return listepseudo;
     }
+
+
+    private void envoyerMessagePrive(String arguments) {
+        if (arguments.isEmpty() || !arguments.contains(" ")) {
+            sendClient("[SERVER] Usage : /msgTo <pseudo> <message>");
+            return;
+        }
+
+        // Extraire le pseudo et le message
+        String[] parts = arguments.split(" ", 2);
+        String targetPseudo = parts[0];
+        String message = parts[1];
+
+        synchronized (userStreams) {
+            if (!userStreams.containsKey(targetPseudo)) {
+                sendClient("[SERVER] L'utilisateur '" + targetPseudo + "' n'existe pas ou n'est pas connecté.");
+                return;
+            }
+
+            PrintStream targetStream = userStreams.get(targetPseudo);
+            targetStream.println("[PRIVE] [" + this.pseudoDuClient + "] : " + message);
+            System.out.println("[PRIVE] -> [" + targetPseudo + "] : " + message);
+        }
+    }
+
+
 }

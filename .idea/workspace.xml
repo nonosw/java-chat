@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="380d2535-8f60-4430-a423-0da8c0ba7eee" name="Changes" comment="V0 operationnelle">
-      <change afterPath="$PROJECT_DIR$/src/notes.txt" afterDir="false" />
+    <list default="true" id="380d2535-8f60-4430-a423-0da8c0ba7eee" name="Changes" comment="V2 en cours">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ServiceChat.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ServiceChat.java" afterDir="false" />
     </list>
@@ -22,6 +21,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="V2" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -30,12 +34,12 @@
     &quot;assignee&quot;: &quot;nonosw&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/nonosw/java-chat.git",
-    "accountId": "5b2ff793-7fdf-4cac-b519-79cc33ee1909"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/nonosw/java-chat.git&quot;,
+    &quot;accountId&quot;: &quot;5b2ff793-7fdf-4cac-b519-79cc33ee1909&quot;
   }
-}]]></component>
+}</component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
@@ -48,17 +52,17 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.ServiceChat.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/user/Documents/chatjava/java-chat&quot;,
-    &quot;onboarding.tips.debug.path&quot;: &quot;C:/0Renaud/java/java-chat/src/Main.java&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.Mappings&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.ServiceChat.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/home/user/Documents/chatjava/java-chat",
+    "onboarding.tips.debug.path": "C:/0Renaud/java/java-chat/src/Main.java",
+    "settings.editor.selected.configurable": "project.propVCSSupport.Mappings"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="ServiceChat" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="ServiceChat" />
@@ -70,6 +74,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.ServiceChat" />
         <item itemvalue="Application.ServiceChat" />
       </list>
     </recent_temporary>
@@ -107,7 +112,15 @@
       <option name="project" value="LOCAL" />
       <updated>1737117800615</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="V2 en cours">
+      <option name="closed" value="true" />
+      <created>1738615562350</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1738615562350</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -123,6 +136,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="V0 operationnelle" />
-    <option name="LAST_COMMIT_MESSAGE" value="V0 operationnelle" />
+    <MESSAGE value="V2 en cours" />
+    <option name="LAST_COMMIT_MESSAGE" value="V2 en cours" />
   </component>
 </project>
