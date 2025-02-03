@@ -1,0 +1,9 @@
+V2
+- /quit
+- [SERVER] Bye foo!
+- [SERVER] Hello foo!
+- /list => Donne la liste des utilisateurs
+-  à la connexion : /list implicite
+- /msgAll coucou
+- /msgTo foo coucou!
+- auth login /mdp

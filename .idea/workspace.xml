@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="380d2535-8f60-4430-a423-0da8c0ba7eee" name="Changes" comment="V0 operationnelle">
+      <change afterPath="$PROJECT_DIR$/src/notes.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ServiceChat.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ServiceChat.java" afterDir="false" />
     </list>
@@ -29,12 +30,12 @@
     &quot;assignee&quot;: &quot;nonosw&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/nonosw/java-chat.git&quot;,
-    &quot;accountId&quot;: &quot;a0f29a38-3e4d-49b2-b42f-5f740c615269&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/nonosw/java-chat.git",
+    "accountId": "5b2ff793-7fdf-4cac-b519-79cc33ee1909"
   }
-}</component>
+}]]></component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>

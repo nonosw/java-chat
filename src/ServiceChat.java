@@ -79,32 +79,32 @@ public class ServiceChat extends Thread {
 
             synchronized (outputs) {
                 if (outputs.size() >= NBUSERSMAX) {
-                    sendClient("Serveur plein, veuillez réessayer plus tard.");
+                    sendClient("[SERVER] Serveur plein, veuillez réessayer plus tard.");
                     clientSocket.close();
                     return false;
                 }
             }
 
             while (true) {
-                sendClient("Entrez votre pseudo :");
+                sendClient("[SERVER] Entrez votre pseudo :");
                 if (!clientScanner.hasNextLine()) {
                     // Le client a fermé la connexion avant de choisir un pseudo
                     return false;
                 }
                 String choixPseudo = clientScanner.nextLine();
                 if (choixPseudo == null) {
-                    sendClient("Pseudo invalide. Veuillez réessayer.");
+                    sendClient("[SERVER] Pseudo invalide. Veuillez réessayer.");
                     continue;
                 }
                 choixPseudo = choixPseudo.trim();
                 if (choixPseudo.isEmpty()) {
-                    sendClient("Pseudo vide. Veuillez fournir un nom non vide.");
+                    sendClient("[SERVER] Pseudo vide. Veuillez fournir un nom non vide.");
                     continue;
                 }
 
                 synchronized (pseudos) {
                     if (pseudos.contains(choixPseudo)) {
-                        sendClient("Ce pseudo est déjà utilisé. Choisissez-en un autre :");
+                        sendClient("[SERVER] Ce pseudo est déjà utilisé. Choisissez-en un autre :");
                     } else {
                         pseudos.add(choixPseudo);
                         this.pseudoDuClient = choixPseudo;
@@ -118,11 +118,10 @@ public class ServiceChat extends Thread {
             }
 
             // Message de bienvenue côté console et côté client
-            System.out.println("Nouvel utilisateur : " + this.pseudoDuClient  + " | Utilisateurs connectés : " + outputs.size());
-            sendClient("Bienvenue " + this.pseudoDuClient + " !");
-            sendClient("Utilisateurs connectés : " + outputs.size());
-
-            diffusionMessage(this.pseudoDuClient + " a rejoint le chat !");
+            System.out.println("Nouvel utilisateur : " + this.pseudoDuClient  + " | Utilisateurs connectes : " + outputs.size());
+            sendClient("[SERVER] Bienvenue " + this.pseudoDuClient + "!  Il y a Utilisateurs connectes : " + outputs.size());
+            sendClient(afficheListPseudo());
+            diffusionMessage("[SERVER] " + this.pseudoDuClient + " a rejoint le chat !");
 
             return true;
         } catch (IOException e) {
@@ -140,17 +139,40 @@ public class ServiceChat extends Thread {
     private void mainLoop() {
         try {
             while (clientScanner.hasNextLine()) {
-                String buffer = clientScanner.nextLine();
-                if (buffer.equalsIgnoreCase("/quit")) {
-                    sendClient("Vous avez été déconnecté.");
-                    break;
+                String buffer = clientScanner.nextLine().trim();
+
+                if (buffer.isEmpty()) {
+                    continue; // Ignore les lignes vides
                 }
-                diffusionMessage(this.pseudoDuClient + " : " + buffer);
+
+                // Découper l'entrée pour récupérer la commande et ses arguments
+                String[] parts = buffer.split(" ", 2);
+                String command = parts[0].toLowerCase(); // Convertir en minuscules pour éviter la casse
+                String arguments = (parts.length > 1) ? parts[1] : ""; // Arguments après la commande
+
+                switch (command) {
+                    case "/quit":
+                        return; // Quitter la boucle
+
+                    case "/list":
+                        sendClient(afficheListPseudo());
+                        break;
+
+                    case "/msgAll":
+                        diffusionMessage("[" + this.pseudoDuClient + "] : " + arguments);
+                        break;
+
+                    default:
+                        diffusionMessage("[" + this.pseudoDuClient + "] : " + buffer);
+                        break;
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+
 
     private void cleanup() {
         if (this.pseudoDuClient != null) {
@@ -176,7 +198,7 @@ public class ServiceChat extends Thread {
         if (this.pseudoDuClient != null) {
             System.out.println("Deconnexion utilisateur : " + this.pseudoDuClient
                     + " | Utilisateurs connectés : " + outputs.size());
-            diffusionMessage(this.pseudoDuClient + " a quitté le chat !");
+            diffusionMessage("[SERVER] " + this.pseudoDuClient + " a quitte le chat !");
         }
     }
 
@@ -187,5 +209,15 @@ public class ServiceChat extends Thread {
             }
             System.out.println(message);
         }
+    }
+
+    private String afficheListPseudo() {
+        String listepseudo;
+        listepseudo = "La liste des utilisateurs connectes : ";
+        for ( String parcourPseudo : pseudos ){
+            listepseudo += "[" + parcourPseudo + "] ";
+        }
+        listepseudo += "!";
+        return listepseudo;
     }
 }
