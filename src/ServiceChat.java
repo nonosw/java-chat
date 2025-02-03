@@ -21,6 +21,8 @@ public class ServiceChat extends Thread {
 
     private static final HashMap<String, PrintStream> userStreams = new HashMap<>();
 
+    private static final HashMap<String, String> userPasswords = new HashMap<>();
+
 
     private final Socket clientSocket;
     private Scanner clientScanner;
@@ -100,24 +102,65 @@ public class ServiceChat extends Thread {
                     sendClient("[SERVER] Pseudo invalide. Veuillez réessayer.");
                     continue;
                 }
-                choixPseudo = choixPseudo.trim();
+                choixPseudo = choixPseudo.trim().toLowerCase();
                 if (choixPseudo.isEmpty()) {
                     sendClient("[SERVER] Pseudo vide. Veuillez fournir un nom non vide.");
                     continue;
                 }
 
                 synchronized (pseudos) {
-                    if (pseudos.contains(choixPseudo)) {
-                        sendClient("[SERVER] Ce pseudo est deja utilisé. Choisissez-en un autre :");
-                    } else {
-                        pseudos.add(choixPseudo);
-                        this.pseudoDuClient = choixPseudo;
-                        synchronized (userStreams) {
-                            userStreams.put(choixPseudo, this.clientOutput);
+                    // Vérifier si le pseudo est déjà connecté
+                    if (userStreams.containsKey(choixPseudo)) {
+                        sendClient("[SERVER] Ce login est déjà connecté. Impossible de se connecter avec.");
+                        return false;
+                    }
+
+                    if (userPasswords.containsKey(choixPseudo)){
+                        int essais = 3;
+                        while (essais > 0) {
+                            sendClient("[SERVER] Entrez votre mot de passe :");
+                            if (!clientScanner.hasNextLine()) {
+                                return false;
+                            }
+                            String password = clientScanner.nextLine().trim();
+
+                            if (password.equals(userPasswords.get(choixPseudo))) {
+                                this.pseudoDuClient = choixPseudo;
+                                break; // Connexion réussie
+                            } else {
+                                essais--;
+                                sendClient("[SERVER] Mot de passe incorrect. Tentatives restantes : " + essais);
+                            }
                         }
-                        break;
+
+                        if (essais == 0) {
+                            sendClient("[SERVER] Trop de tentatives échouées. Déconnexion.");
+                            return false;
+                        }
+                    } else {
+                        // Nouvel utilisateur, demander un mot de passe
+                        sendClient("[SERVER] Nouveau login détecté. Choisissez un mot de passe :");
+                        if (!clientScanner.hasNextLine()) {
+                            return false;
+                        }
+                        String newPassword = clientScanner.nextLine().trim();
+
+                        if (newPassword.isEmpty()) {
+                            sendClient("[SERVER] Mot de passe invalide. Connexion refusée.");
+                            return false;
+                        }
+
+                        // Stocker le login et le mot de passe
+                        userPasswords.put(choixPseudo, newPassword);
+                        this.pseudoDuClient = choixPseudo;
+                    }
+                    // Ajouter le pseudo à la liste des connectés
+                    pseudos.add(this.pseudoDuClient);
+                    synchronized (userStreams) {
+                        userStreams.put(this.pseudoDuClient, this.clientOutput);
                     }
                 }
+                break;
             }
 
             synchronized (outputs) {
