@@ -35,7 +35,6 @@ public class ClientChat extends Thread {
     }
 
     public void run() {
-
         try {
             while (running) {
 
@@ -52,14 +51,12 @@ public class ClientChat extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     private void initStreams(String[] args) {
         String host = "localhost";
         int port = 2222;
 
-        // Si deux arguments sont présents, on les utilise
         if (args.length >= 2) {
             host = args[0];
             port = Integer.parseInt(args[1]);
