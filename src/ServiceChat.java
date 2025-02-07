@@ -244,6 +244,7 @@ public class ServiceChat extends Thread {
         }
 
         try {
+            sendClient("Vous avez ete deconnecte... ");
             if (clientScanner != null) clientScanner.close();
             if (clientOutput != null) clientOutput.close();
             if (clientSocket != null) clientSocket.close();
@@ -252,8 +253,7 @@ public class ServiceChat extends Thread {
         }
 
         if (this.pseudoDuClient != null) {
-            System.out.println("Deconnexion utilisateur : " + this.pseudoDuClient
-                    + " | Utilisateurs connectés : " + outputs.size());
+            System.out.println("Deconnexion utilisateur : " + this.pseudoDuClient  + " | Utilisateurs connectés : " + outputs.size());
             diffusionMessage("[SERVER] " + this.pseudoDuClient + " a quitte le chat !", clientOutput);
         }
     }

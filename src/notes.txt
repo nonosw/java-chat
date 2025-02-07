@@ -7,3 +7,10 @@ V2
 - /msgAll coucou
 - /msgTo foo coucou!
 - auth login /mdp
+
+V3
+client : message -> serveur -> all : message
+client : /msgTo pseudo message -> serveur -> pseudo : message
+client : /sendAll message -> serveur -> all : message
+input : /sendFile filename pseudo -> client : /msgTo pseudo FILE:bs64(namefile):bs64(file) -> serveur -> psuedo : FILE:bs64(namefile):bs64(file) -> pseudo : decode fichier
+input : /sendFileC filename pseudo -> client : /msgTo pseudo FILEC:bs64(namefile):bs64(file) -> serveur -> psuedo : FILEC:bs64(namefile):bs64(file) -> pseudo : dechiffre fichier
