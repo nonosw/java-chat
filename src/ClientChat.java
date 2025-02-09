@@ -42,15 +42,13 @@ public class ClientChat extends Thread {
                     serverLine = inputNetwork.readLine();
                 } catch (SocketException e) {
                     running = false;
-                    System.out.println("La connexion au serveur a été interrompue !");
+                    outputConsole.println("La connexion au serveur a été interrompue !");
                     break;
                 }
-                if (serverLine == null) {
-                    System.out.println("=> Run On a server == null on va break");
-                    running = false;
-                    break;
+                if (serverLine != null) {
+                    outputConsole.println(serverLine);
                 }
-                outputConsole.println(serverLine);
+
                 if (serverLine.trim().equals("Vous avez ete deconnecte...")) {
                     running = false;
                 }
