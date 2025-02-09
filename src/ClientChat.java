@@ -18,9 +18,6 @@ public class ClientChat extends Thread {
         try {
             while (running) {
                 String line = inputConsole.readLine();
-                if (line == null) {
-                    break; // Si null, on sort ou on peut tenter de relire
-                }
                 outputNetwork.println(line);
             }
         } catch (IOException e) {
@@ -37,15 +34,22 @@ public class ClientChat extends Thread {
     public void run() {
         try {
             while (running) {
-
-                String serverLine = inputNetwork.readLine();
+                String serverLine;
+                try {
+                    serverLine = inputNetwork.readLine();
+                } catch (SocketException e) {
+                    running = false;
+                    System.out.println("La connexion au serveur a été interrompue !");
+                    break;
+                }
                 if (serverLine == null) {
-                    break; // Le serveur a coupé la connexion
+                    System.out.println("=> Run On a server == null on va break");
+                    running = false;
+                    break;
                 }
                 outputConsole.println(serverLine);
                 if (serverLine.trim().equals("Vous avez ete deconnecte...")) {
                     running = false;
-                    System.exit(0);
                 }
             }
         } catch (IOException e) {

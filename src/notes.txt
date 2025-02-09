@@ -1,3 +1,21 @@
+V0:
+- utilisation du client TCP générique telnet
+- serveur à l'écoute sur un port TCP fixe
+- serveur muet sur la sortie standard
+- quand serveur plein: envoi d'un message informatif aux tentatives de connexion
+- pas de gestion de la déconnexion des utilisateurs
+
+V1:
+- port TCP pouvant être indiqué au lancement du serveur en ligne de commande
+- serveur volubile sur la sortie standard: port TCP utilisé, mode en cours
+  (attente de connexion, tentative de connexion)
+- log sur la console du serveur des différentes actions (connexion d'un
+  utilisateur, déconnexion d'un utilisateur, messages transmis, etc.)
+- à la connexion si serveur pas plein: demande d'un pseudo qui doit être unique
+  (pas deux connectés avec le même login)
+- affichage du nombre d'utilisateurs en ligne à chaque nouveau connecté
+- chaque message préfixé du login de son émetteur <foo> Hello world!
+
 V2
 - /quit
 - [SERVER] Bye foo!
