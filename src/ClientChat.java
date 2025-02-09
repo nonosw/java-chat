@@ -15,20 +15,23 @@ public class ClientChat extends Thread {
     public ClientChat(String[] args) {
         initStreams(args);
         start();
+    }
+
+
+    public static void main(String[] args) {
+
+        ClientChat clientChat = new ClientChat(args);
         try {
             while (running) {
-                String line = inputConsole.readLine();
-                outputNetwork.println(line);
+                String line = clientChat.inputConsole.readLine();
+                if (line != null){
+                    clientChat.outputNetwork.println(line);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
         closeConnections();
-    }
-
-
-    public static void main(String[] args) {
-        new ClientChat(args);
     }
 
     public void run() {
@@ -79,7 +82,7 @@ public class ClientChat extends Thread {
         }
     }
 
-    private void closeConnections() {
+    private static void closeConnections() {
         try {
             if (socket != null) socket.close();
             if (inputNetwork != null) inputNetwork.close();
