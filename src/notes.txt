@@ -32,8 +32,8 @@ RFC Joseph
 client : message -> serveur -> all : message
 client : /msgTo pseudo message -> serveur -> pseudo : message
 client : /sendAll message -> serveur -> all : message
-input : /sendFile filename pseudo ->
 
+input : /sendFile filename pseudo ->
 client : /msgTo pseudo FILE:bs64(namefile):bs64(file)
     -> serveur
     -> pseudo : FILE:bs64(namefile):bs64(file)
