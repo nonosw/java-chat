@@ -18,11 +18,9 @@ public class ServiceChat extends Thread {
     private static final List<PrintStream> outputs = new ArrayList<>();
     // structure pour avoir un pseudo unique
     private static final Set<String> pseudos = new HashSet<>();
-
     private static final HashMap<String, PrintStream> userStreams = new HashMap<>();
-
     private static final HashMap<String, String> userPasswords = new HashMap<>();
-
+    private static final HashMap<String, String> userClientTypes = new HashMap<>();
 
     private final Socket clientSocket;
     private Scanner clientScanner;
@@ -82,6 +80,14 @@ public class ServiceChat extends Thread {
         try {
             this.clientOutput = new PrintStream(clientSocket.getOutputStream(), true);
             this.clientScanner = new Scanner(clientSocket.getInputStream());
+
+            String clientType = "T";
+            if (clientScanner.hasNextLine()) {
+                String firstLine = clientScanner.nextLine();
+                if (firstLine.equals("/clientjava")) {
+                    clientType = "J";
+                }
+            }
 
             synchronized (outputs) {
                 if (outputs.size() >= NBUSERSMAX) {
@@ -159,6 +165,9 @@ public class ServiceChat extends Thread {
                     synchronized (userStreams) {
                         userStreams.put(this.pseudoDuClient, this.clientOutput);
                     }
+                    synchronized (userClientTypes) {
+                        userClientTypes.put(this.pseudoDuClient, clientType);
+                    }
                 }
                 break;
             }
@@ -211,6 +220,16 @@ public class ServiceChat extends Thread {
                         envoyerMessagePrive(arguments);
                         break;
 
+                    case "/whois":
+                        if (arguments.isEmpty()) {
+                            sendClient("[SERVER] Usage : /whois <pseudo>");
+                        } else {
+                            String clientType = (getClientType(arguments).equals("J")) ? "Java" : "Telnet";
+
+                            sendClient("[SERVER] <" + arguments + "> utilise un client " + clientType + " !");
+                        }
+                        break;
+
                     case "/msgall":
                         diffusionMessage("[" + this.pseudoDuClient + "] : " + arguments, clientOutput);
                         break;
@@ -234,6 +253,9 @@ public class ServiceChat extends Thread {
             }
             synchronized (pseudos) {
                 pseudos.remove(this.pseudoDuClient);
+            }
+            synchronized (userClientTypes) {
+                userClientTypes.remove(this.pseudoDuClient);
             }
         }
 
@@ -280,11 +302,17 @@ public class ServiceChat extends Thread {
         return null; // Retourne null si aucun pseudo trouvé
     }
 
+
     private String afficheListPseudo() {
-        String listepseudo;
-        listepseudo = "[SERVER] Utilisateurs connectes : ";
-        for ( String parcourPseudo : pseudos ){
-            listepseudo += "<" + parcourPseudo + "> ";
+        String listepseudo = "[SERVER] Utilisateurs connectés : ";
+        synchronized (pseudos) {
+            for (String parcourPseudo : pseudos) {
+                String clientType = "T"; // Par défaut, on considère Telnet
+                if (userClientTypes.containsKey(parcourPseudo)) {
+                    clientType = userClientTypes.get(parcourPseudo);
+                }
+                listepseudo += "<" + parcourPseudo + "|" + clientType + "> ";
+            }
         }
         listepseudo += "!";
         return listepseudo;
@@ -297,7 +325,6 @@ public class ServiceChat extends Thread {
             return;
         }
 
-        // Extraire le pseudo et le message
         String[] parts = arguments.split(" ", 2);
         String targetPseudo = parts[0];
         String message = parts[1];
@@ -311,6 +338,12 @@ public class ServiceChat extends Thread {
             PrintStream targetStream = userStreams.get(targetPseudo);
             targetStream.println("[PRIVE] [" + this.pseudoDuClient + "] : " + message);
             System.out.println("[PRIVE] -> [" + targetPseudo + "] : " + message);
+        }
+    }
+
+    private String getClientType(String pseudo) {
+        synchronized (userClientTypes) {
+            return userClientTypes.getOrDefault(pseudo, "inconnu");
         }
     }
 

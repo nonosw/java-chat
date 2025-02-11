@@ -74,6 +74,8 @@ public class ClientChat extends Thread {
             outputNetwork = new PrintWriter(socket.getOutputStream(), true);
             outputConsole = System.out;
             outputConsole.println("Connecté à " + host + " sur le port " + port);
+            // Envoyer une ligne d'identification
+            outputNetwork.println("/clientjava");
 
         } catch (IOException e) {
             e.printStackTrace();
