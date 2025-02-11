@@ -27,27 +27,20 @@ V2
 - auth login /mdp
 
 V3
+RFC Joseph
+1er connexion, si lourd envoie "lourd" sinon "\n"
 client : message -> serveur -> all : message
 client : /msgTo pseudo message -> serveur -> pseudo : message
 client : /sendAll message -> serveur -> all : message
-input : /sendFile filename pseudo -> client : /msgTo pseudo FILE:bs64(namefile):bs64(file) -> serveur -> psuedo : FILE:bs64(namefile):bs64(file) -> pseudo : decode fichier
-input : /sendFileC filename pseudo -> client : /msgTo pseudo FILEC:bs64(namefile):bs64(file) -> serveur -> psuedo : FILEC:bs64(namefile):bs64(file) -> pseudo : dechiffre fichier
+input : /sendFile filename pseudo ->
 
+client : /msgTo pseudo FILE:bs64(namefile):bs64(file)
+    -> serveur
+    -> pseudo : FILE:bs64(namefile):bs64(file)
+    -> pseudo : decode fichier
 
+input : /sendFileC filename pseudo
+    -> client : /msgTo pseudo FILEC:bs64(namefile):bs64(file)
+    -> serveur
+    -> psuedo : FILEC:bs64(namefile):bs64(file) -> pseudo : dechiffre fichier
 
-pour récupérer le type de client
-private String getClientType(String pseudo) {
-    synchronized (userClientTypes) {
-        return userClientTypes.getOrDefault(pseudo, "inconnu");
-    }
-}
-
-Ajoutez par exemple une commande /whois <pseudo> pour voir le type du client :
-case "/whois":
-    if (arguments.isEmpty()) {
-        sendClient("[SERVER] Usage : /whois <pseudo>");
-    } else {
-        String type = getClientType(arguments);
-        sendClient("[SERVER] " + arguments + " utilise un client de type : " + type);
-    }
-    break;
